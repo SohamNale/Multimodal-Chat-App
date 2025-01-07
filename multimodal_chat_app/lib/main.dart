@@ -13,7 +13,7 @@ class ChatApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Chat App',
+      title: 'Multimodal Chat App',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const ChatScreen(),
     );
@@ -32,9 +32,13 @@ class ChatScreenState extends State<ChatScreen> {
   final List<Map<String, String>> _messages = [];
   final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
-  bool _shouldScrollToNewMessage = false;  // Flag to scroll after response is received
+  bool _shouldScrollToNewMessage = false;
 
-  final String apiUrl = '{use your ngrok link}/generate';
+  final String apiUrl = 'https://115c-34-125-150-100.ngrok-free.app/generate';
+
+  // Dropdown menu variables
+  String _selectedModel = 'llama'; // Default model
+  final List<String> _models = ['llama', 'gemini', 'mistral'];
 
   Future<void> _sendMessage() async {
     final userMessage = _controller.text.trim();
@@ -43,19 +47,18 @@ class ChatScreenState extends State<ChatScreen> {
     setState(() {
       _messages.add({"role": "user", "content": userMessage});
       _isLoading = true;
-      _shouldScrollToNewMessage = true;  // Mark that we need to scroll after response
+      _shouldScrollToNewMessage = true;
     });
 
     _controller.clear();
 
-    // Scroll down before the response is displayed to ensure the new input is visible
     _scrollToNewMessage();
 
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"message": userMessage}),
+        body: jsonEncode({"message": userMessage, "model": _selectedModel}),
       );
 
       if (response.statusCode == 200) {
@@ -75,17 +78,14 @@ class ChatScreenState extends State<ChatScreen> {
         _isLoading = false;
       });
 
-      // After response is received, scroll to the new message location
       if (_shouldScrollToNewMessage) {
         _scrollToNewMessage();
       }
     }
   }
 
-  // Function to scroll to the new message
   void _scrollToNewMessage() {
     if (_scrollController.hasClients) {
-      // Scroll to the bottom to make sure the new message is visible
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 300),
@@ -93,7 +93,7 @@ class ChatScreenState extends State<ChatScreen> {
       );
     }
   }
-
+  
   // Listen for scroll position to detect if the user is at the bottom
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
@@ -123,20 +123,53 @@ class ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true, // Center the title
-        title: const Text(
-          'Chat AI',
-          style: TextStyle(
-            fontWeight: FontWeight.bold, // Make the text bold
-            fontSize: 30, // Optional: Adjust the font size
+        toolbarHeight: 100, // Increase AppBar height for proper spacing
+        title: Padding(
+          padding: const EdgeInsets.only(top: 20), // Adjust this value to balance the positioning
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center, // Ensure alignment to the center
+            children: [
+              const Text(
+                'Multimodal Chat AI',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28, // Adjust font size as needed
+                ),
+              ),
+              DropdownButton<String>(
+                value: _selectedModel,
+                items: _models.map((String model) {
+                  return DropdownMenuItem<String>(
+                    value: model,
+                    child: Text(
+                      model.toUpperCase(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16, // Adjust font size as needed
+                      ),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedModel = newValue!;
+                  });
+                },
+                underline: Container(),
+              ),
+            ],
           ),
         ),
+        centerTitle: true, // Ensure the column remains centered horizontally
+        backgroundColor: const Color(0xFFE6E6FA), // Custom cream color (or use any other color you prefer)
       ),
+      //backgroundColor: const Color(0xFFFFFAFA), // Light cream or off-white for the body
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
-              controller: _scrollController,  // Set the controller here
+              controller: _scrollController,
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final message = _messages[index];
@@ -147,12 +180,13 @@ class ChatScreenState extends State<ChatScreen> {
                     margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: isUser ? Colors.blue : Colors.grey[300],
+                      color: isUser ? Colors.blue : const Color(0xFFE0B0FF),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       message['content']!,
-                      style: TextStyle(color: isUser ? Colors.white : Colors.black),
+                      style: TextStyle(color: isUser ? Colors.white : Colors.black,
+                      fontSize: isUser ? 16.0 : 16.0),
                     ),
                   ),
                 );
@@ -169,6 +203,8 @@ class ChatScreenState extends State<ChatScreen> {
                     controller: _controller,
                     decoration: const InputDecoration(
                       hintText: 'Type a message...',
+                      filled: true, // Enables background fill
+                      fillColor: Colors.white, // White background
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -186,10 +222,3 @@ class ChatScreenState extends State<ChatScreen> {
     );
   }
 }
-
-
-
-
-
-
-
