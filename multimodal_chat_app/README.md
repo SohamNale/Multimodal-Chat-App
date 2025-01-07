@@ -1,16 +1,6 @@
-# chat_app
+# multimodal_chat_app
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Steps to run the app:
+1. Open Android Studio
+2. Go to lib folder in multimodal_chat_app
+3. Run the main.dart file present in lib folder in Android Studio
