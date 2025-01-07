@@ -1,107 +1,97 @@
 # Multimodal Chat App
 
-This is a multimodal chat application that supports multiple AI models including Llama 3.2, Gemini, and Mistral 3b. The app maintains context history, allowing you to switch models mid-conversation while retaining the conversation history. The backend uses a Flask API to access the models, and ngrok is used to expose the Flask API publicly.
+A Flutter-based chat application that allows you to interact with multiple AI models including Llama 3.2, Gemini, and Mistral 3b. The app maintains conversation history across model switches and provides a seamless chat experience.
 
 ## Features
 
-- Supports multiple AI models: Llama 3.2, Gemini, and Mistral 3b.
-- Maintains context history across model switches.
-- Dropdown list to select the desired model.
-- Backend Flask API for model access.
-- ngrok for exposing the Flask API publicly.
-- Test notebook to verify the Flask API functionality.
+- **Multiple AI Models**: Switch between three powerful language models:
+  - Llama 3.2 (1B Instruct)
+  - Gemini 1.5 Flash
+  - Mistral 3B
+- **Context Awareness**: Maintains conversation history even when switching between models
+- **Real-time Model Switching**: Easy model selection through dropdown menu
+- **Modern UI**: Clean and intuitive chat interface with message bubbles
+- **Loading Indicators**: Visual feedback during API calls
+
+## Architecture
+
+### Frontend (Flutter)
+- Built with Flutter for cross-platform compatibility
+- Uses HTTP package for API communication
+- Implements Provider for state management
+- Features a responsive and user-friendly interface
+
+### Backend (Python)
+- Flask-based REST API
+- Integration with multiple AI models:
+  - HuggingFace Transformers for Llama and Mistral
+  - Google GenerativeAI for Gemini
+- CORS support for cross-origin requests
+- Ngrok for public URL exposure
+
+## Prerequisites
+
+- Flutter SDK (3.5.4 or higher)
+- Python 3.x
+- HuggingFace account and API token
+- Google Cloud account and Gemini API key
+- Ngrok account and authtoken
+
+## Setup
+
+### Backend Setup
+
+1. Install required Python packages:
+```bash
+pip install -U flask-cors pyngrok transformers torch 
+```
+2. Update API credentials in Multimodal_Chat_API.ipynb:
+ - Replace "Use your huggingface token" with your HuggingFace token
+ - Replace "Use your Gemini API Key" with your Gemini API key
+ - Replace "Use your ngrok token" with your Ngrok authtoken
+3. Run the Flask server:
+ - Execute all cells in Multimodal_Chat_API.ipynb
+ - Copy the Ngrok public URL displayed in the output
+
+### Frontend Setup
+1. Update the API URL in main.dart:
+```bash
+final String apiUrl = 'YOUR_NGROK_URL/generate';
+```
+2. Install Flutter dependencies:
+```bash
+flutter pub get
+```
+3. Run the application:
+```bash
+flutter run
+```
+
+## Testing
+Use Multimodal_API_test.ipynb to test the Flask API endpoints:
+
+1. Update the ngrok_url variable with your Ngrok public URL
+2. Run the notebook to test all model endpoints
+3. Verify responses from each model
 
 ## Project Structure
-```sh
-multimodal_chat_app/
-├── .dart_tool/
-├── .idea/
-├── android/
-├── build/
-├── ios/
+```bash
 ├── lib/
-│   ├── main.dart
-├── linux/
-├── macos/
-├── test/
-├── web/
-├── windows/
-├── .gitignore
-├── .metadata
-├── analysis_options.yaml
-├── chat_app.iml
-├── devtools_options.yaml
-├── pubspec.lock
-├── pubspec.yaml
-├── README.md
-├── Multimodal_API_test.ipynb
-├── Multimodal_Chat_API.ipynb
+│   └── main.dart           # Main Flutter application code
+├── Multimodal_Chat_API.ipynb    # Backend Flask API implementation
+├── Multimodal_API_test.ipynb    # API testing notebook
+└── pubspec.yaml           # Flutter dependencies
 ```
-## Getting Started
-
-### Prerequisites
-
-- Flutter SDK
-- Python 3.x
-- ngrok
-- Flask
-- Transformers library
-- Hugging Face account and token
-
-### Installation
-
-1. **Clone the repository:**
-
-    ```sh
-    git clone https://github.com/yourusername/multimodal_chat_app.git
-    cd multimodal_chat_app
-    ```
-
-2. **Set up the Flutter app:**
-
-    ```sh
-    flutter pub get
-    ```
-
-3. **Set up the Flask API:**
-
-    ```sh
-    pip install -U flask-cors pyngrok
-    ```
-
-4. **Install ngrok:**
-
-    Follow the instructions on the [ngrok website](https://ngrok.com/download) to install ngrok.
-
-### Running the Application
-
-1. **Start the Flask API:**
-
-    Open [Multimodal_Chat_API.ipynb](http://_vscodecontentref_/2) and run all cells to start the Flask API and get the ngrok public URL.
-
-2. **Update the Flutter app with the ngrok URL:**
-
-    In [main.dart](http://_vscodecontentref_/3), update the `apiUrl` variable with the ngrok public URL.
-
-    ```dart
-    final String apiUrl = 'https://your_ngrok_url_here/generate';
-    ```
-
-3. **Run the Flutter app:**
-
-    ```sh
-    flutter run
-    ```
-
-4. **Test the Flask API:**
-
-    Open [Multimodal_API_test.ipynb](http://_vscodecontentref_/4) and run all cells to test the Flask API with different models.
-
-## Usage
-
-- Open the app and start a conversation.
-- Use the dropdown list to switch between Llama 3.2, Gemini, and Mistral 3b models.
-- The app will maintain the context history even when switching models.
+## Dependencies
+### Flutter
+* http: ^1.2.2
+* provider: ^6.1.2
+* flutter_lints: ^4.0.0
+### Python
+* flask-cors
+* pyngrok
+* transformers
+* torch
 
 ## Acknowledgements
 
